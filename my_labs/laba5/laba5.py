@@ -1,0 +1,69 @@
+'''
+Задана рекуррентная функция. Область определения функции – натуральные числа. Написать программу сравнительного вычисления данной функции рекурсивно и итерационно. Определить границы применимости рекурсивного и итерационного подхода. Результаты сравнительного исследования времени вычисления представить в табличной и графической форме.
+30.	F(1) = 1; F(2) = 2; F(3) = 3, F(n) = (-1)n*(F(n-3)*(n-1) /(2n)!) при n > 3. 
+'''
+import matplotlib.pyplot as plt
+import time
+
+# Мемоизация для факториала
+factorial_cache = {0: 1}
+
+def factorial(n):
+    if n not in factorial_cache:
+        factorial_cache[n] = n * factorial(n - 1)
+    return factorial_cache[n]
+
+# Мемоизация для функции F
+F_cache = {1: 1, 2: 2, 3: 3}
+
+# Рекурсивный подход с использованием мемоизации
+def recursive_F(n):
+    if n not in F_cache:
+        sign = -1 if n % 2 else 1
+        F_cache[n] = sign * (recursive_F(n - 3) * (n - 1)) / factorial(2 * n)
+    return F_cache[n]
+
+# Итеративный подход с использованием кэша факториала
+def iterative_F(n):
+    if n in F_cache:
+        return F_cache[n]
+
+    f0, f1, f2, f3 = 1, 2, 3, 3
+    for i in range(4, n + 1):
+        sign = -1 if i % 2 else 1
+        fi = sign * (f3 * (i - 1)) / factorial(2 * i)
+        f0, f1, f2, f3 = f1, f2, f3, fi
+        F_cache[i] = fi
+
+    return F_cache[n]
+
+# Сравнение времени выполнения
+n_values = list(range(1, 11))
+recursive_times = []
+iterative_times = []
+
+for n in n_values:
+    recursive_start_time = time.perf_counter()
+    recursive_F(n)
+    recursive_time = time.perf_counter() - recursive_start_time
+    recursive_times.append(recursive_time)
+
+    iterative_start_time = time.perf_counter()
+    iterative_F(n)
+    iterative_time = time.perf_counter() - iterative_start_time
+    iterative_times.append(iterative_time)
+
+print("Сравнение времени выполнения:")
+print("---------------------------------")
+print("n | Рекурсивное время | Итеративное время")
+print("---|-------------------|-------------------")
+for i in range(len(n_values)):
+    print(f"{n_values[i]} | {recursive_times[i]:.10f} | {iterative_times[i]:.10f}")
+
+# Вывод графика
+plt.plot(n_values, recursive_times, label='Рекурсивное время')
+plt.plot(n_values, iterative_times, label='Итеративное время')
+plt.xlabel('n')
+plt.ylabel('Время (секунды)')
+plt.legend()
+plt.show()
