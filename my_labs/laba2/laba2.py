@@ -1,0 +1,25 @@
+'''
+Шеснадцатиричные четные числа, не превышающие 102410 начинающиеся с нечетных цифр. Четные цифры выводить словамии
+'''
+import re
+
+digit_to_word = {
+    '0': 'ноль', '2': 'два', '4': 'четыре', '6': 'шесть',
+    '8': 'восемь', 'A': 'десять', 'C': 'двенадцать', 'E': 'четырнадцать'
+}
+
+def hex_to_words(hex_num):
+    if int(hex_num, 16) <= 0x400 and hex_num[0] in '13579BDF':
+        return ' '.join(digit_to_word.get(d, d) for d in hex_num)
+    else:
+        return "не удовлетворяет условию задачи"
+
+
+
+pattern = re.compile(r'\b[13579BDF][0-9A-F]*[02468ACE]\b', re.IGNORECASE)
+
+with open('test.txt', 'r') as f:
+    for match in pattern.finditer(f.read()):
+        word_representation = hex_to_words(match.group())
+        if word_representation:
+            print(f"{match.group()}: {word_representation}")

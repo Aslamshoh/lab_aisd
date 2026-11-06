@@ -57,3 +57,7 @@ with open('test.txt', 'r') as f:
 print(lexemes)
 print(num2words(int(lexemes[-1]), lang='ru'))
 block = f.read()
+
+---
+
+Мои собственные лабораторные работы из отдельных репозиториев собраны в папке [`my_labs/`](my_labs/README.md).
